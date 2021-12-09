@@ -1,26 +1,38 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import moment from "moment";
 
-const JournalEntry = () => {
+import { activeNote } from "../../actions/notes";
+
+const JournalEntry = ({ id, title, body, date, url }) => {
+  const dispatch = useDispatch();
+  const noteDate = moment(date);
+
+  const handleEntryClick = () => {
+    dispatch(activeNote(id, { title, body, date, url }));
+  };
+
   return (
-    <div className="journal__entry pointer">
-      <div
-        className="journal__entry-picture"
-        style={{
-          backgroundSize: "cover",
-          backgroundImage:
-            "url(http://cdn26.us1.fansshare.com/photo/wallpaperforiphone/stars-sky-tumblr-space-stars-iphone-plus-wallpaper-tumblr-552747996.jpg)",
-        }}
-      ></div>
+    <div
+      className="journal__entry pointer animate__animated animate__zoomIn animate__faster"
+      onClick={handleEntryClick}
+    >
+      {url && (
+        <div
+          className="journal__entry-picture"
+          style={{
+            backgroundSize: "cover",
+            backgroundImage: `url(${url})`,
+          }}
+        ></div>
+      )}
       <div className="journal__entry-body">
-        <p className="journal__entry-title">Un nuevo día</p>
-        <p className="journal__entry-content">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry.
-        </p>
+        <p className="journal__entry-title">{title}</p>
+        <p className="journal__entry-content">{body}</p>
       </div>
       <div className="journal__entry-date-box">
-        <span>Monday</span>
-        <h4>28</h4>
+        <span>{noteDate.format("dddd")}</span>
+        <h4>{noteDate.format("Do")}</h4>
       </div>
     </div>
   );

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Switch, Redirect } from "react-router-dom";
 import { useDispatch } from "react-redux";
+
 import { login } from "../actions/auth";
 import { firebase } from "../firebase/firebaseConfig";
 import AuthRouter from "./AuthRouter";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
 import JournalScreen from "../components/journal/JournalScreen";
+import { startLoadingNotes } from "../actions/notes";
 
 const AppRouter = () => {
   const [isChecking, setIsChecking] = useState(true);
@@ -15,10 +17,11 @@ const AppRouter = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((user) => {
+    firebase.auth().onAuthStateChanged(async (user) => {
       if (user?.uid) {
         dispatch(login(user.uid, user.displayName));
         setIsLoggedIn(true);
+        dispatch(startLoadingNotes(user.uid));
       } else {
         setIsLoggedIn(false);
       }
@@ -47,7 +50,7 @@ const AppRouter = () => {
     </Router>
   ) : (
     <div className="auth__main">
-      <h1 className="auth__title-wait">Espere ...</h1>
+      <h1 className="auth__title-wait">Wait ...</h1>
     </div>
   );
 };
